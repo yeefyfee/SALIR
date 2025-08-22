@@ -1,0 +1,26 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/index/index"
+		},
+		{
+			"path": "pages/plan/create"
+		},
+		{
+			"path": "pages/plan/createDetail"
+		}
+
+	],
+	"globalStyle": {
+		"navigationStyle": "custom",
+		"usingComponents": {
+			"van-icon": "wxcomponents/vant/dist/icon/index",
+			"van-button": "wxcomponents/vant/dist/button/index",
+			"van-tag": "wxcomponents/vant/dist/tag/index",
+			"van-nav-bar": "wxcomponents/vant/dist/nav-bar/index",
+			"van-empty": "wxcomponents/vant/dist/empty/index",
+			"van-switch": "wxcomponents/vant/dist/switch/index"
+		}
+	},
+	"uniIdRouter": {}
+}
