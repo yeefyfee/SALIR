@@ -118,26 +118,56 @@ function dtPickerShort(startYear, endYear, date) {
 		dateTime: dateTime
 	}
 }
+
+// 根据开始和结束日期生成日期选择器数组
+function dtPickerWithRange(startDate, endDate) {
+	var dateTime = [],
+		dateTimeArray = [
+			[],
+			[],
+			[]
+		];
+	
+	// 解析开始和结束日期
+	var start = new Date(startDate);
+	var end = new Date(endDate);
+	
+	// 生成年份数组
+	var startYear = start.getFullYear();
+	var endYear = end.getFullYear();
+	dateTimeArray[0] = getLoopArray(startYear, endYear);
+	
+	// 生成月份数组（根据年份范围调整）
+	var months = [];
+	for (var year = startYear; year <= endYear; year++) {
+		var monthStart = year === startYear ? start.getMonth() + 1 : 1;
+		var monthEnd = year === endYear ? end.getMonth() + 1 : 12;
+		for (var month = monthStart; month <= monthEnd; month++) {
+			months.push(withData(month));
+		}
+	}
+	dateTimeArray[1] = months;
+	
+	// 生成日期数组（默认使用当前月份的天数）
+	dateTimeArray[2] = getMonthDay(startYear.toString(), withData(start.getMonth() + 1));
+	
+	// 设置默认选中值
+	dateTime[0] = 0; // 默认选中第一个年份
+	dateTime[1] = 0; // 默认选中第一个月份
+	dateTime[2] = 0; // 默认选中第一天
+
+	return {
+		dateTimeArray: dateTimeArray,
+		dateTime: dateTime
+	}
+}
 /**格式化日期 */
 function generateTimeStr(dateTimeArray, dateTime) {
-	const timeStr =
-		dateTimeArray[0][dateTime[0]] +
-		"年" +
-		dateTimeArray[1][dateTime[1]] +
-		"月" +
-		dateTimeArray[2][dateTime[2]] +
-		"日"
-	// dateTimeArray[0][dateTime[0]] +
-	// "-" +
-	// dateTimeArray[1][dateTime[1]] +
-	// "-" +
-	// dateTimeArray[2][dateTime[2]] +
-	// " " +
-	// dateTimeArray[3][dateTime[3]] +
-	// ":" +
-	// dateTimeArray[4][dateTime[4]] +
-	// ":" +
-	// dateTimeArray[5][dateTime[5]];
+	const year = dateTimeArray[0][dateTime[0]];
+	const month = dateTimeArray[1][dateTime[1]];
+	const day = dateTimeArray[2][dateTime[2]];
+	
+	const timeStr = year + "年" + month + "月" + day + "日";
 	return timeStr;
 }
 
@@ -157,5 +187,6 @@ module.exports = {
 	getMonthDay,
 	generateTimeStr,
 	formatDate,
-	dtPickerShort
+	dtPickerShort,
+	dtPickerWithRange
 };

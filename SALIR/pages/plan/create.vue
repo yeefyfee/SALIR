@@ -28,6 +28,9 @@
 					</picker>
 				</view>
 			</view>
+			<view v-if="!isDateValid && begindt && enddt" style="color: #ff4d4f; font-size: 12px; margin-top: 8px; text-align: center;">
+				结束日期不能早于开始日期
+			</view>
 
 			<view style="margin-bottom: 24px;">
 				<view style="font-size: 16px; font-weight: 500; margin-bottom: 8px;"class="titletip">地点</view>
@@ -98,8 +101,9 @@
 			</view>
 
 			<view style="padding: 12px; border-radius: 8px; margin-top: 12px;">
-				<van-button round type="info" color="#165DFF" @click="itineraryAdd" block><van-icon
-						name="add" />添加行程</van-button>
+				<van-button round type="info" color="#165DFF" @click="itineraryAdd" block :disabled="!isDateValid">
+					<van-icon name="add" />添加行程
+				</van-button>
 			</view>
 		</view>
 	</view>
@@ -129,6 +133,19 @@
 				coverImage: '' // 封面图片地址
 			}
 		},
+		computed: {
+			isDateValid() {
+				if (!this.begindt || !this.enddt) return false;
+				
+				try {
+					const startDate = this.parseDateString(this.begindt);
+					const endDate = this.parseDateString(this.enddt);
+					return endDate >= startDate;
+				} catch (e) {
+					return false;
+				}
+			}
+		},
 		methods: {
 			onClickLeft(e) {
 				uni.navigateBack()
@@ -141,10 +158,14 @@
 			changeDateTime(e) {
 				this.dateTimebegin = e.detail.value
 				this.begindt = generateTimeStr(this.dateTimeArray, this.dateTimebegin)
+				// 验证时间范围
+				this.validateDateRange();
 			},
 			changeDateTimeEnd(e) {
-				this.dateTimeEnd = e.detail.value
-				this.enddt = generateTimeStr(this.dateTimeArray, this.dateTimeEnd)
+				this.dateTimeend = e.detail.value
+				this.enddt = generateTimeStr(this.dateTimeArray, this.dateTimeend)
+				// 验证时间范围
+				this.validateDateRange();
 			},
 			changeDateTimeColumn(e) {
 				let {
@@ -153,17 +174,36 @@
 				} = e.detail;
 				if (column == 0 || column == 1) {
 					//直接修改数组下标视图不更新,用深拷贝之后替换数组
-					let dateTime = JSON.parse(JSON.stringify(this.dateTimebegin));
 					let dateTimeArray = JSON.parse(JSON.stringify(this.dateTimeArray));
-					dateTime[column] = value;
-					dateTimeArray[2] = getMonthDay(dateTimeArray[0][dateTime[0]], dateTimeArray[1][dateTime[
-						1]]);
-					this.dateTimebegin = dateTime;
+					dateTimeArray[2] = getMonthDay(dateTimeArray[0][value], dateTimeArray[1][value]);
 					this.dateTimeArray = dateTimeArray;
 				}
 			},
 			formatDate(date) {
-				return `${date.getFullYear()}年${date.getMonth()+1}月${date.getDate()}日`;
+				const year = date.getFullYear();
+				const month = (date.getMonth() + 1).toString().padStart(2, '0');
+				const day = date.getDate().toString().padStart(2, '0');
+				return `${year}年${month}月${day}日`;
+			},
+			// 验证日期范围
+			validateDateRange() {
+				if (!this.begindt || !this.enddt) return true;
+				
+				// 将日期字符串转换为Date对象进行比较
+				const startDate = this.parseDateString(this.begindt);
+				const endDate = this.parseDateString(this.enddt);
+				
+				if (endDate < startDate) {
+					return false;
+				}
+				return true;
+			},
+			// 解析日期字符串
+			parseDateString(dateStr) {
+				const year = parseInt(dateStr.match(/(\d+)年/)[1]);
+				const month = parseInt(dateStr.match(/(\d+)月/)[1]);
+				const day = parseInt(dateStr.match(/(\d+)日/)[1]);
+				return new Date(year, month - 1, day);
 			},
 			initTime() {
 				let date = new Date();
@@ -173,7 +213,9 @@
 
 				this.dateTimeArray = obj.dateTimeArray
 				this.dateTimebegin = obj.dateTime
+				this.dateTimeend = obj.dateTime
 				this.begindt = this.formatDate(new Date())
+				this.enddt = this.formatDate(new Date())
 			},
 			chooseConverImage() {
 				uni.chooseImage({
@@ -186,8 +228,12 @@
 				});
 			},
 			itineraryAdd() {
+				// 传递开始和结束日期到详情页面
+				const startDate = this.begindt ? this.begindt.replace(/年|月|日/g, '-').slice(0, -1) : '2025-03-15';
+				const endDate = this.enddt ? this.enddt.replace(/年|月|日/g, '-').slice(0, -1) : '2025-03-20';
+				
 				uni.navigateTo({
-					url: '/pages/plan/createDetail'
+					url: `/pages/plan/createDetail?startDate=${startDate}&endDate=${endDate}`
 				})
 			}
 		},
