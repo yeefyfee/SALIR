@@ -53,9 +53,10 @@
 		flex-direction: column;
 		height: 100vh;
 	}
+
 	.content {
 		flex: 1;
-		overflow: hidden;
+		overflow: auto;
 		min-height: 0;
 		margin-top: 40px;
 	}
