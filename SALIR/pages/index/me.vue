@@ -60,6 +60,15 @@
 					<uni-icons type="right" size="16" color="#ccc"></uni-icons>
 				</view>
 			</view>
+
+			<view class="list-item" @click="exitLogin()">
+				<view class="item-left">
+					<text class="item-text">退出登录</text>
+				</view>
+				<view class="item-right">
+					<uni-icons type="right" size="16" color="#ccc"></uni-icons>
+				</view>
+			</view>
 		</view>
 
 		<view>
@@ -79,11 +88,19 @@
 </template>
 
 <script>
+	import {
+		showModalWithAwait,
+		pathToBase64
+	} from '../../common/helper.js'
+	import {
+		requestHttp
+	} from '../../api/request.js';
 	export default {
 		data() {
 			return {
 				// 用户信息
 				userInfo: {
+					id: '',
 					avatar: 'https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg',
 					name: '',
 					phone: '',
@@ -114,8 +131,7 @@
 		},
 
 		onLoad() {
-			// 从本地存储加载用户信息
-			this.loadUserInfo();
+
 			// 获取应用版本信息
 			this.getAppVersion();
 		},
@@ -123,9 +139,21 @@
 		methods: {
 			// 加载用户信息
 			loadUserInfo() {
-				const savedUser = uni.getStorageSync('weiboUserInfo');
+				const savedUser = uni.getStorageSync('UserInfo');
+				const that = Vue.prototype;
 				if (savedUser) {
-					this.userInfo = savedUser;
+					this.userInfo.id = savedUser.id
+					this.userInfo.avatar = !savedUser.head_Img ? that.ImgsURL + 'default_head.png' :
+						savedUser.head_Img
+					this.userInfo.name = savedUser.userName;
+					this.userInfo.phone = savedUser.phone;
+					const t = savedUser.tag.split(';')
+					this.userInfo.tips = []
+					for (var i = 0; i < t.length; i++) {
+						this.userInfo.tips.push({
+							option: t[i]
+						})
+					}
 				}
 			},
 
@@ -145,17 +173,48 @@
 					sourceType: ['album', 'camera'],
 					success: (res) => {
 						const tempFilePath = res.tempFilePaths[0];
+						this.ImgToBase64(tempFilePath).then(base64 => {
+							const opt = {
+								servername: 'api/TsUser/ModifyHeadImg',
+								params: {
+									Id: this.userInfo.id,
+									Img: base64
+								},
+								method: 'post'
+							}
+							requestHttp(opt).then(res => {
+								console.log(res)
+							})
+						})
 						// 显示新头像
 						this.userInfo.avatar = tempFilePath;
-						// 保存到本地存储
-						this.saveUserInfo();
 					}
 				});
 			},
-
+			ImgToBase64(data) {
+				return new Promise((resolve, reject) => {
+					pathToBase64(data).then(base64 => {
+						resolve(base64)
+					}).catch(error => {
+						console.error(error)
+						reject(error)
+					})
+				})
+			},
 			// 编辑名称
 			editName(e) {
 				this.userInfo.name = e
+				const opt = {
+					servername: 'api/TsUser/ModifyUserName',
+					params: {
+						id: this.userInfo.id,
+						username: e
+					},
+					method: 'get'
+				}
+				requestHttp(opt).then(res => {
+					console.log(res)
+				})
 			},
 			editPhone(e) {
 				this.userInfo.phone = e
@@ -166,6 +225,21 @@
 			inputDialogToggle() {
 				this.$refs.inputDialog.open()
 			},
+			async exitLogin() {
+				var res = await showModalWithAwait('是否确认退出登录?')
+				if (res.cancel) {
+					return;
+				}
+				uni.setStorage('UserInfo')
+
+				uni.reLaunch({
+					url: '/pages/index/login'
+				})
+			}
+		},
+		mounted() {
+			// 从本地存储加载用户信息
+			this.loadUserInfo();
 		}
 	}
 </script>

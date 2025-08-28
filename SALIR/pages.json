@@ -8,6 +8,9 @@
 		},
 		{
 			"path": "pages/plan/createDetail"
+		},
+		{
+			"path": "pages/index/login"
 		}
 
 	],

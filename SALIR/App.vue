@@ -5,6 +5,12 @@
 		},
 		onShow: function() {
 			console.log('App Show')
+			const userinfo = uni.getStorageSync('UserInfo')
+			if (!userinfo) {
+				uni.reLaunch({
+					url: '/pages/index/login'
+				})
+			}
 		},
 		onHide: function() {
 			console.log('App Hide')

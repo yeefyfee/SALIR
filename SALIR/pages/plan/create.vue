@@ -5,36 +5,37 @@
 		<view class="content hide-scrollbar">
 			<view style="margin-bottom: 24px;">
 				<view style="font-size: 16px; font-weight: 500; margin-bottom: 8px;" class="titletip">计划名称</view>
-				<input type="text" v-model="plan" class="form-input" placeholder="例如：春日日本之旅">
+				<input type="text" v-model="planInfo.planname" class="form-input" placeholder="例如：春日日本之旅">
 			</view>
 
 			<view style="display: flex; gap: 16px; margin-bottom: 24px;">
 				<view style="flex: 1;">
-					<view style="font-size: 16px; font-weight: 500; margin-bottom: 8px;"class="titletip">开始日期</view>
+					<view style="font-size: 16px; font-weight: 500; margin-bottom: 8px;" class="titletip">开始日期</view>
 					<picker mode="multiSelector" :value="dateTimebegin" @change="changeDateTime"
 						@columnchange="changeDateTimeColumn" :range="dateTimeArray">
 						<view class='picker'>
-							{{begindt?begindt:formatDate(new Date())}}
+							{{planInfo.realbegin?planInfo.realbegin:formatDate(new Date())}}
 						</view>
 					</picker>
 				</view>
 				<view style="flex: 1;">
-					<view style="font-size: 16px; font-weight: 500; margin-bottom: 8px;"class="titletip">结束日期</view>
+					<view style="font-size: 16px; font-weight: 500; margin-bottom: 8px;" class="titletip">结束日期</view>
 					<picker mode="multiSelector" :value="dateTimeend" @change="changeDateTimeEnd"
 						@columnchange="changeDateTimeColumn" :range="dateTimeArray">
 						<view class='picker'>
-							{{enddt?enddt:formatDate(new Date())}}
+							{{planInfo.realend?planInfo.realend:formatDate(new Date())}}
 						</view>
 					</picker>
 				</view>
 			</view>
-			<view v-if="!isDateValid && begindt && enddt" style="color: #ff4d4f; font-size: 12px; margin-top: 8px; text-align: center;">
+			<view v-if="!isDateValid && planInfo.realbegin && planInfo.realend"
+				style="color: #ff4d4f; font-size: 12px; margin-top: 8px; text-align: center;">
 				结束日期不能早于开始日期
 			</view>
 
 			<view style="margin-bottom: 24px;">
-				<view style="font-size: 16px; font-weight: 500; margin-bottom: 8px;"class="titletip">地点</view>
-				<input type="text" class="form-input" placeholder="添加目的地">
+				<view style="font-size: 16px; font-weight: 500; margin-bottom: 8px;" class="titletip">地点</view>
+				<input type="text" class="form-input" placeholder="添加目的地" v-model="planInfo.address" />
 				<view style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;">
 					<van-tag type="primary">东京</van-tag>
 					<van-tag type="primary">大阪</van-tag>
@@ -42,12 +43,12 @@
 			</view>
 
 			<view style="margin-bottom: 24px;">
-				<view style="font-size: 16px; font-weight: 500; margin-bottom: 8px;"class="titletip">封面照片</view>
+				<view style="font-size: 16px; font-weight: 500; margin-bottom: 8px;" class="titletip">封面照片</view>
 				<view
 					style="width: 100%; height: 150px; border-radius: 12px; border: 1px dashed #ddd; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #999; background: #f9f9f9;"
 					@click="chooseConverImage">
-					<template v-if="coverImage">
-						<image :src="coverImage"
+					<template v-if="planInfo.img">
+						<image :src="planInfo.img"
 							style="width: 100%; height: 100%; border-radius: 12px; object-fit: cover;" />
 					</template>
 					<template v-else>
@@ -66,35 +67,6 @@
 				<view style="color: #999; font-size: 14px; margin-top: 4px;">上午09:00 - 下午09:00</view>
 			</view>
 
-			<view style="padding: 12px; border: 1px solid #eee; border-radius: 8px; margin-top: 12px;">
-				<view>3月16日 · 浅草寺</view>
-				<view style="color: #999; font-size: 14px; margin-top: 4px;">上午10:00 - 下午03:00</view>
-			</view>
-
-			<view style="padding: 12px; border: 1px solid #eee; border-radius: 8px; margin-top: 12px;">
-				<view>3月16日 · 浅草寺</view>
-				<view style="color: #999; font-size: 14px; margin-top: 4px;">上午10:00 - 下午03:00</view>
-			</view>
-			<view style="padding: 12px; border: 1px solid #eee; border-radius: 8px; margin-top: 12px;">
-				<view>3月16日 · 浅草寺</view>
-				<view style="color: #999; font-size: 14px; margin-top: 4px;">上午10:00 - 下午03:00</view>
-			</view>
-			<view style="padding: 12px; border: 1px solid #eee; border-radius: 8px; margin-top: 12px;">
-				<view>3月16日 · 浅草寺</view>
-				<view style="color: #999; font-size: 14px; margin-top: 4px;">上午10:00 - 下午03:00</view>
-			</view>
-			<view style="padding: 12px; border: 1px solid #eee; border-radius: 8px; margin-top: 12px;">
-				<view>3月16日 · 浅草寺</view>
-				<view style="color: #999; font-size: 14px; margin-top: 4px;">上午10:00 - 下午03:00</view>
-			</view>
-			<view style="padding: 12px; border: 1px solid #eee; border-radius: 8px; margin-top: 12px;">
-				<view>3月16日 · 浅草寺</view>
-				<view style="color: #999; font-size: 14px; margin-top: 4px;">上午10:00 - 下午03:00</view>
-			</view>
-			<view style="padding: 12px; border: 1px solid #eee; border-radius: 8px; margin-top: 12px;">
-				<view>3月16日 · 浅草寺</view>
-				<view style="color: #999; font-size: 14px; margin-top: 4px;">上午10:00 - 下午03:00</view>
-			</view>
 			<view style="padding: 12px; border: 1px solid #eee; border-radius: 8px; margin-top: 12px;">
 				<view>3月16日 · 浅草寺</view>
 				<view style="color: #999; font-size: 14px; margin-top: 4px;">上午10:00 - 下午03:00</view>
@@ -119,6 +91,7 @@
 	export default {
 		data() {
 			return {
+				planInfo: {},
 				plan: '',
 				dateTimebegin: '',
 				dateTimeend: '',
@@ -127,19 +100,20 @@
 					['2025', '2026', '2027'], // 年
 					['01', '02', '03'], // 月
 					['01', '02', '03'] // 日
-				],
-				begindt: '',
-				enddt: '',
-				coverImage: '' // 封面图片地址
+				]
 			}
+		},
+		onLoad() {
+			this.planInfo = uni.getStorageSync('tempItem')
+			//uni.removeStorageSync('tempItem')
 		},
 		computed: {
 			isDateValid() {
-				if (!this.begindt || !this.enddt) return false;
-				
+				if (!this.planInfo.realbegin || !this.planInfo.realend) return false;
+
 				try {
-					const startDate = this.parseDateString(this.begindt);
-					const endDate = this.parseDateString(this.enddt);
+					const startDate = this.parseDateString(this.planInfo.realbegin);
+					const endDate = this.parseDateString(this.planInfo.realend);
 					return endDate >= startDate;
 				} catch (e) {
 					return false;
@@ -157,13 +131,13 @@
 			},
 			changeDateTime(e) {
 				this.dateTimebegin = e.detail.value
-				this.begindt = generateTimeStr(this.dateTimeArray, this.dateTimebegin)
+				this.planInfo.realbegin = generateTimeStr(this.dateTimeArray, this.dateTimebegin)
 				// 验证时间范围
 				this.validateDateRange();
 			},
 			changeDateTimeEnd(e) {
 				this.dateTimeend = e.detail.value
-				this.enddt = generateTimeStr(this.dateTimeArray, this.dateTimeend)
+				this.planinfo.realend = generateTimeStr(this.dateTimeArray, this.dateTimeend)
 				// 验证时间范围
 				this.validateDateRange();
 			},
@@ -187,12 +161,12 @@
 			},
 			// 验证日期范围
 			validateDateRange() {
-				if (!this.begindt || !this.enddt) return true;
-				
+				if (!this.planInfo.realbegin || !this.planInfo.realend) return true;
+
 				// 将日期字符串转换为Date对象进行比较
-				const startDate = this.parseDateString(this.begindt);
-				const endDate = this.parseDateString(this.enddt);
-				
+				const startDate = this.parseDateString(this.planInfo.realbegin);
+				const endDate = this.parseDateString(this.planInfo.realend);
+
 				if (endDate < startDate) {
 					return false;
 				}
@@ -214,8 +188,16 @@
 				this.dateTimeArray = obj.dateTimeArray
 				this.dateTimebegin = obj.dateTime
 				this.dateTimeend = obj.dateTime
-				this.begindt = this.formatDate(new Date())
-				this.enddt = this.formatDate(new Date())
+				if (!this.planInfo) {
+					this.planInfo.realbegin = this.formatDate(new Date())
+					this.planInfo.realend = this.formatDate(new Date())
+				} else {
+					const bt = this.planInfo.realbegin.replace(/年|月|日/g, '-').slice(0, -1);
+					const et = this.planInfo.realend.replace(/年|月|日/g, '-').slice(0, -1);
+					this.dateTimebegin = dtPickerShort(this.startYear, endYear, bt).dateTime
+					this.dateTimeend = dtPickerShort(this.startYear, endYear, et).dateTime
+				}
+
 			},
 			chooseConverImage() {
 				uni.chooseImage({
@@ -223,15 +205,17 @@
 					sizeType: ['original'],
 					sourceType: ['album'],
 					success: (res) => {
-						this.coverImage = res.tempFilePaths[0];
+						this.planInfo.img = res.tempFilePaths[0];
 					}
 				});
 			},
 			itineraryAdd() {
 				// 传递开始和结束日期到详情页面
-				const startDate = this.begindt ? this.begindt.replace(/年|月|日/g, '-').slice(0, -1) : '2025-03-15';
-				const endDate = this.enddt ? this.enddt.replace(/年|月|日/g, '-').slice(0, -1) : '2025-03-20';
-				
+				const startDate = this.planInfo.realbegin ? this.planInfo.realbegin.replace(/年|月|日/g, '-').slice(0, -1) :
+					'2025-03-15';
+				const endDate = this.planInfo.realend ? this.planInfo.realend.replace(/年|月|日/g, '-').slice(0, -1) :
+					'2025-03-20';
+
 				uni.navigateTo({
 					url: `/pages/plan/createDetail?startDate=${startDate}&endDate=${endDate}`
 				})
