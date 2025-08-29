@@ -140,11 +140,12 @@
 			// 加载用户信息
 			loadUserInfo() {
 				const savedUser = uni.getStorageSync('UserInfo');
+				console.log(savedUser)
 				const that = Vue.prototype;
 				if (savedUser) {
 					this.userInfo.id = savedUser.id
-					this.userInfo.avatar = !savedUser.head_Img ? that.ImgsURL + 'default_head.png' :
-						savedUser.head_Img
+					this.userInfo.avatar = that.ImgsURL + (!savedUser.head_Img ? 'default_head.png' :
+						savedUser.head_Img)
 					this.userInfo.name = savedUser.userName;
 					this.userInfo.phone = savedUser.phone;
 					const t = savedUser.tag.split(';')
@@ -183,7 +184,9 @@
 								method: 'post'
 							}
 							requestHttp(opt).then(res => {
-								console.log(res)
+								let user = uni.getStorageSync('UserInfo')
+								user.head_Img = res.data
+								uni.setStorageSync('UserInfo', user)
 							})
 						})
 						// 显示新头像
@@ -213,7 +216,9 @@
 					method: 'get'
 				}
 				requestHttp(opt).then(res => {
-					console.log(res)
+					let user = uni.getStorageSync('UserInfo')
+					user.userName = e
+					uni.setStorageSync('UserInfo', user)
 				})
 			},
 			editPhone(e) {
@@ -230,7 +235,7 @@
 				if (res.cancel) {
 					return;
 				}
-				uni.setStorage('UserInfo')
+				uni.removeStorage('UserInfo')
 
 				uni.reLaunch({
 					url: '/pages/index/login'

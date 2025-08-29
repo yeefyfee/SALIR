@@ -53,7 +53,8 @@
 							val: '美食',
 						}
 					],
-					address: '东京、大阪、京都'
+					address: '东京、大阪、京都',
+					dtls: []
 				}, {
 					planname: '夏威夷',
 					img: 'https://modao.cc/ai/uploads/ai_pics/15/154328/aigp_1755675818.jpeg',
@@ -66,7 +67,8 @@
 							val: '度假',
 						}
 					],
-					address: '檀香山、茂宜岛'
+					address: '檀香山、茂宜岛',
+					dtls: []
 				}],
 				plan: ''
 			}
@@ -98,7 +100,8 @@
 							enddt: parseDateString(result[i].enD_DATE, 'M'),
 							realbegin: parseDateString(result[i].begiN_DATE),
 							realend: parseDateString(result[i].enD_DATE),
-							address: result[i].target
+							address: result[i].target,
+							dtls: []
 						})
 
 					}

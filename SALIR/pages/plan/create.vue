@@ -37,8 +37,8 @@
 				<view style="font-size: 16px; font-weight: 500; margin-bottom: 8px;" class="titletip">地点</view>
 				<input type="text" class="form-input" placeholder="添加目的地" v-model="planInfo.address" />
 				<view style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;">
-					<van-tag type="primary">东京</van-tag>
-					<van-tag type="primary">大阪</van-tag>
+					<!-- <van-tag type="primary">东京</van-tag>
+					<van-tag type="primary">大阪</van-tag> -->
 				</view>
 			</view>
 
@@ -62,14 +62,15 @@
 				style="margin-top: 24px; font-weight: 700; font-size: 18px; padding-bottom: 8px; border-bottom: 1px solid #eee;">
 				日程管理</view>
 
-			<view style="padding: 12px; border: 1px solid #eee; border-radius: 8px; margin-top: 12px;">
-				<view>3月15日 · 东京迪士尼</view>
-				<view style="color: #999; font-size: 14px; margin-top: 4px;">上午09:00 - 下午09:00</view>
-			</view>
-
-			<view style="padding: 12px; border: 1px solid #eee; border-radius: 8px; margin-top: 12px;">
-				<view>3月16日 · 浅草寺</view>
-				<view style="color: #999; font-size: 14px; margin-top: 4px;">上午10:00 - 下午03:00</view>
+			<view style="padding: 12px; border: 1px solid #eee; border-radius: 8px; margin-top: 12px;"
+				v-for="d in planInfo.dtls">
+				<view style="display: flex; justify-content: space-between; align-items: center;">
+					<view style=" font-size: 18px;">{{pdate(d.plaN_DATE.substr(0,10),'M')}} ·
+						{{d.address}}
+					</view>
+					<van-icon name="arrow" style="font-size: 18px; color: #999;" />
+				</view>
+				<view style="color: #999; font-size: 14px; margin-top: 4px;">{{d.begiN_TIME}} - {{d.enD_TIME}}</view>
 			</view>
 
 			<view style="padding: 12px; border-radius: 8px; margin-top: 12px;">
@@ -83,11 +84,20 @@
 
 <script>
 	import {
+		requestHttp
+	} from '../../api/request';
+	import {
+		parseDateString as pdate
+	} from '../../common/datetime.js'
+	import {
 		getMonthDay,
 		generateTimeStr,
 		dateTimePicker,
 		dtPickerShort
 	} from '@/common/datetime.js'
+	import {
+		pathToBase64
+	} from '../../common/helper.js'
 	export default {
 		data() {
 			return {
@@ -100,7 +110,8 @@
 					['2025', '2026', '2027'], // 年
 					['01', '02', '03'], // 月
 					['01', '02', '03'] // 日
-				]
+				],
+				base64: ''
 			}
 		},
 		onLoad() {
@@ -121,13 +132,12 @@
 			}
 		},
 		methods: {
+			pdate,
 			onClickLeft(e) {
 				uni.navigateBack()
 			},
 			onClickRight(e) {
-				uni.showToast({
-					title: '...'
-				})
+				console.log(this.base64)
 			},
 			changeDateTime(e) {
 				this.dateTimebegin = e.detail.value
@@ -206,8 +216,22 @@
 					sourceType: ['album'],
 					success: (res) => {
 						this.planInfo.img = res.tempFilePaths[0];
+						this.ImgToBase64(res.tempFilePaths[0]).then(base64 => {
+							console.log(base64)
+							this.base64 = base64
+						})
 					}
 				});
+			},
+			ImgToBase64(data) {
+				return new Promise((resolve, reject) => {
+					pathToBase64(data).then(base64 => {
+						resolve(base64)
+					}).catch(error => {
+						console.error(error)
+						reject(error)
+					})
+				})
 			},
 			itineraryAdd() {
 				// 传递开始和结束日期到详情页面
@@ -219,10 +243,26 @@
 				uni.navigateTo({
 					url: `/pages/plan/createDetail?startDate=${startDate}&endDate=${endDate}`
 				})
+			},
+			GetPlanDtl() {
+				var opt = {
+					servername: 'api/TsPlanDetail/GetPlanDtls',
+					params: {
+						planId: this.planInfo.id
+					},
+					method: 'get'
+				}
+				requestHttp(opt).then(res => {
+					this.planInfo.dtls = res.data
+
+				})
+
+
 			}
 		},
 		mounted() {
 			this.initTime()
+			this.GetPlanDtl()
 		}
 	}
 </script>

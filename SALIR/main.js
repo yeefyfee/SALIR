@@ -10,7 +10,6 @@ Vue.prototype.$bus = bus
 
 Vue.prototype.RequestURL = 'http://65e72656.r32.cpolar.top/'
 Vue.prototype.ImgsURL = 'http://632c5e55.r32.cpolar.top/'
-Vue.prototype.ContentType = 'application/json'
 App.mpType = 'app'
 const app = new Vue({
 	...App

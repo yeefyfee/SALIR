@@ -69,7 +69,6 @@ export function requestHttp(opt) {
 			console.log("Request【" + requestUrl + "】 INFO JSON:" + JSON.stringify(opt.params))
 			uni.request({
 				url: requestUrl,
-				header: that.ContentType,
 				data: opt.params,
 				method: opt.method,
 				success: (res) => {

@@ -4246,40 +4246,32 @@ var render = function () {
                   expression: "planInfo.address",
                 },
               }),
-              _c(
-                "uni-view",
-                {
-                  staticStyle: {
-                    display: "flex",
-                    "flex-wrap": "wrap",
-                    gap: "8px",
-                    "margin-top": "8px",
-                  },
-                  attrs: { _i: 19 },
+              _c("uni-view", {
+                staticStyle: {
+                  display: "flex",
+                  "flex-wrap": "wrap",
+                  gap: "8px",
+                  "margin-top": "8px",
                 },
-                [
-                  _c("van-tag", { attrs: { _i: 20 } }, [_vm._v("东京")]),
-                  _c("van-tag", { attrs: { _i: 21 } }, [_vm._v("大阪")]),
-                ],
-                1
-              ),
+                attrs: { _i: 19 },
+              }),
             ],
             1
           ),
           _c(
             "uni-view",
-            { staticStyle: { "margin-bottom": "24px" }, attrs: { _i: 22 } },
+            { staticStyle: { "margin-bottom": "24px" }, attrs: { _i: 20 } },
             [
               _c(
                 "uni-view",
                 {
-                  staticClass: _vm._$g(23, "sc"),
+                  staticClass: _vm._$g(21, "sc"),
                   staticStyle: {
                     "font-size": "16px",
                     "font-weight": "500",
                     "margin-bottom": "8px",
                   },
-                  attrs: { _i: 23 },
+                  attrs: { _i: 21 },
                 },
                 [_vm._v("封面照片")]
               ),
@@ -4298,7 +4290,7 @@ var render = function () {
                     color: "#999",
                     background: "#f9f9f9",
                   },
-                  attrs: { _i: 24 },
+                  attrs: { _i: 22 },
                   on: {
                     click: function ($event) {
                       return _vm.$handleViewEvent($event)
@@ -4306,7 +4298,7 @@ var render = function () {
                   },
                 },
                 [
-                  _vm._$g(25, "i")
+                  _vm._$g(23, "i")
                     ? [
                         _c("v-uni-image", {
                           staticStyle: {
@@ -4315,13 +4307,13 @@ var render = function () {
                             "border-radius": "12px",
                             "object-fit": "cover",
                           },
-                          attrs: { src: _vm._$g(26, "a-src"), _i: 26 },
+                          attrs: { src: _vm._$g(24, "a-src"), _i: 24 },
                         }),
                       ]
                     : [
                         _c("van-icon", {
                           staticStyle: { "font-size": "40px" },
-                          attrs: { _i: 28 },
+                          attrs: { _i: 26 },
                         }),
                         _vm._v("点击添加封面图片"),
                       ],
@@ -4334,7 +4326,7 @@ var render = function () {
           _c(
             "uni-view",
             {
-              staticClass: _vm._$g(29, "sc"),
+              staticClass: _vm._$g(27, "sc"),
               staticStyle: {
                 "margin-top": "24px",
                 "font-weight": "700",
@@ -4342,99 +4334,107 @@ var render = function () {
                 "padding-bottom": "8px",
                 "border-bottom": "1px solid #eee",
               },
-              attrs: { _i: 29 },
+              attrs: { _i: 27 },
             },
             [_vm._v("日程管理")]
           ),
-          _c(
-            "uni-view",
-            {
-              staticStyle: {
-                padding: "12px",
-                border: "1px solid #eee",
-                "border-radius": "8px",
-                "margin-top": "12px",
-              },
-              attrs: { _i: 30 },
-            },
-            [
-              _c("uni-view", { attrs: { _i: 31 } }, [
-                _vm._v("3月15日 · 东京迪士尼"),
-              ]),
-              _c(
-                "uni-view",
-                {
-                  staticStyle: {
-                    color: "#999",
-                    "font-size": "14px",
-                    "margin-top": "4px",
-                  },
-                  attrs: { _i: 32 },
+          _vm._l(_vm._$g(28, "f"), function (d, $10, $20, $30) {
+            return _c(
+              "uni-view",
+              {
+                key: d,
+                staticStyle: {
+                  padding: "12px",
+                  border: "1px solid #eee",
+                  "border-radius": "8px",
+                  "margin-top": "12px",
                 },
-                [_vm._v("上午09:00 - 下午09:00")]
-              ),
-            ],
-            1
-          ),
+                attrs: { _i: "28-" + $30 },
+              },
+              [
+                _c(
+                  "uni-view",
+                  {
+                    staticStyle: {
+                      display: "flex",
+                      "justify-content": "space-between",
+                      "align-items": "center",
+                    },
+                    attrs: { _i: "29-" + $30 },
+                  },
+                  [
+                    _c(
+                      "uni-view",
+                      {
+                        staticStyle: { "font-size": "18px" },
+                        attrs: { _i: "30-" + $30 },
+                      },
+                      [
+                        _vm._v(
+                          _vm._$g("30-" + $30, "t0-0") +
+                            " ·\n\t\t\t\t\t" +
+                            _vm._$g("30-" + $30, "t0-1")
+                        ),
+                      ]
+                    ),
+                    _c("van-icon", {
+                      staticStyle: { "font-size": "18px", color: "#999" },
+                      attrs: { _i: "31-" + $30 },
+                    }),
+                  ],
+                  1
+                ),
+                _c(
+                  "uni-view",
+                  {
+                    staticStyle: {
+                      color: "#999",
+                      "font-size": "14px",
+                      "margin-top": "4px",
+                    },
+                    attrs: { _i: "32-" + $30 },
+                  },
+                  [
+                    _vm._v(
+                      _vm._$g("32-" + $30, "t0-0") +
+                        " - " +
+                        _vm._$g("32-" + $30, "t0-1")
+                    ),
+                  ]
+                ),
+              ],
+              1
+            )
+          }),
           _c(
             "uni-view",
             {
               staticStyle: {
                 padding: "12px",
-                border: "1px solid #eee",
                 "border-radius": "8px",
                 "margin-top": "12px",
               },
               attrs: { _i: 33 },
             },
             [
-              _c("uni-view", { attrs: { _i: 34 } }, [
-                _vm._v("3月16日 · 浅草寺"),
-              ]),
-              _c(
-                "uni-view",
-                {
-                  staticStyle: {
-                    color: "#999",
-                    "font-size": "14px",
-                    "margin-top": "4px",
-                  },
-                  attrs: { _i: 35 },
-                },
-                [_vm._v("上午10:00 - 下午03:00")]
-              ),
-            ],
-            1
-          ),
-          _c(
-            "uni-view",
-            {
-              staticStyle: {
-                padding: "12px",
-                "border-radius": "8px",
-                "margin-top": "12px",
-              },
-              attrs: { _i: 36 },
-            },
-            [
               _c(
                 "van-button",
                 {
-                  attrs: { _i: 37 },
+                  attrs: { _i: 34 },
                   on: {
                     click: function ($event) {
                       return _vm.$handleViewEvent($event)
                     },
                   },
                 },
-                [_c("van-icon", { attrs: { _i: 38 } }), _vm._v("添加行程")],
+                [_c("van-icon", { attrs: { _i: 35 } }), _vm._v("添加行程")],
                 1
               ),
             ],
             1
           ),
         ],
-        1
+        2
       ),
     ],
     1
