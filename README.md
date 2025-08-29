@@ -1,4 +1,4 @@
-#SALIR
+## SALIR
 闲来写个女朋友用的一个出行app，以下是原型图<br>
 <img width="1920" height="921" alt="image" src="https://github.com/user-attachments/assets/3c10cb4d-097c-493f-99f5-a2e472b5e72b" />
 
