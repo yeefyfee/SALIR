@@ -8,8 +8,8 @@ Vue.config.productionTip = false
 const bus = new Vue()
 Vue.prototype.$bus = bus
 
-Vue.prototype.RequestURL = 'http://65e72656.r32.cpolar.top/'
-Vue.prototype.ImgsURL = 'http://632c5e55.r32.cpolar.top/'
+Vue.prototype.RequestURL = 'http://salir.nat123.top:8099/'
+Vue.prototype.ImgsURL = 'http://imgs.nat123.top:39160/'
 App.mpType = 'app'
 const app = new Vue({
 	...App

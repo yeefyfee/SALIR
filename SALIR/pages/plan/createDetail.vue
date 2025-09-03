@@ -2,7 +2,7 @@
 	<view class="container">
 		<van-nav-bar style="margin-top: 40px;" title="项目内容" left-text="返回" left-arrow @click-left="back">
 			<template #right>
-				<van-icon name="success" style="font-size: 25px;color: #007aff;" />
+				<van-icon name="success" style="font-size: 25px;color: #007aff;" @click="dtlcommit" />
 			</template>
 		</van-nav-bar>
 		<view class="content hide-scrollbar">
@@ -17,7 +17,7 @@
 						<picker mode="multiSelector" :value="dateTime" @change="changeDateTime"
 							@columnchange="changeDateTimeColumn" :range="dateTimeArray">
 							<view class='picker'>
-								{{ selectedDate ? selectedDate : formatDate(new Date()) }}
+								{{ dtlInfo.plaN_DATE ? dtlInfo.plaN_DATE : formatDate(new Date()) }}
 							</view>
 						</picker>
 					</view>
@@ -27,7 +27,7 @@
 							<picker mode="multiSelector" :value="startTime" @change="changeStartTime"
 								@columnchange="changeTimeColumn" :range="timeArray">
 								<view class='picker'>
-									{{ startTimeStr ? startTimeStr : '09:00' }}
+									{{ dtlInfo.begiN_TIME ? dtlInfo.begiN_TIME : '09:00' }}
 								</view>
 							</picker>
 						</view>
@@ -36,7 +36,7 @@
 							<picker mode="multiSelector" :value="endTime" @change="changeEndTime"
 								@columnchange="changeTimeColumn" :range="timeArray">
 								<view class='picker'>
-									{{ endTimeStr ? endTimeStr : '21:00' }}
+									{{ dtlInfo.enD_TIME ? dtlInfo.enD_TIME : '21:00' }}
 								</view>
 							</picker>
 						</view>
@@ -82,13 +82,13 @@
 
 			<view style="margin-top: 24px;">
 				<view style="font-size: 16px; font-weight: 500; margin-bottom: 8px;" class="titletip">地点</view>
-				<input type="text" class="form-input" placeholder="例如：日本东京迪士尼乐园">
+				<input type="text" class="form-input" placeholder="例如：日本东京迪士尼乐园" v-model="dtlInfo.address">
 
 			</view>
 
 			<view style="margin-top: 24px;">
 				<view style="font-size: 16px; font-weight: 500; margin-bottom: 8px;" class="titletip">备注</view>
-				<textarea class="form-input" style="height: 100px;" v-model="remark"
+				<textarea class="form-input" style="height: 100px;" v-model="dtlInfo.remark"
 					placeholder="添加日程备注信息，例如：提前官网购票，避开周末节假日人流高峰。"></textarea>
 			</view>
 		</view>
@@ -101,12 +101,14 @@
 		generateTimeStr,
 		dateTimePicker,
 		dtPickerShort,
-		dtPickerWithRange
+		dtPickerWithRange,
+		parseDateString
 	} from '@/common/datetime.js'
 
 	export default {
 		data() {
 			return {
+				dtlInfo: {},
 				transportList: [{
 						code: 'walk',
 						name: '步行',
@@ -181,6 +183,15 @@
 				startTimeStr: '',
 				endTimeStr: '',
 				remark: ''
+			}
+		},
+		onLoad() {
+			var dtl = uni.getStorageSync('tempDtl')
+			if (dtl) {
+				this.dtlInfo = dtl
+
+				console.log(this.dtlInfo)
+				uni.removeStorageSync('tempDtl')
 			}
 		},
 		methods: {
@@ -267,17 +278,29 @@
 
 				const startDate = options.startDate || '2025-03-15';
 				const endDate = options.endDate || '2025-03-20';
-
 				// 使用时间范围限制的日期选择器
 				let obj = dtPickerWithRange(startDate, endDate);
-
-				this.dateTimeArray = obj.dateTimeArray
 				this.dateTime = obj.dateTime
-				this.selectedDate = this.formatDate(new Date())
+				this.dateTimeArray = obj.dateTimeArray
+				if (this.dtlInfo.id) {
+					const dt = this.dtlInfo.plaN_DATE.replace(/年|月|日/g, '-').slice(0, -1)
+					this.dtlInfo.plaN_DATE = parseDateString(this.dtlInfo.plaN_DATE.substr(0.10))
+					this.dateTime = dtPickerShort(this.startDate, endDate, dt).dateTime
+					this.startTimeStr = this.dtlInfo.begiN_TIME.substr(0, 5)
+					this.endTimeStr = this.dtlInfo.enD_TIME.substr(0, 5)
+					this.runtype = this.dtlInfo.ruN_TYPE
+					this.checked = this.dtlInfo.infO_FLAG == 'Y'
+					this.time = this.dtlInfo.infO_TIME
+				} else {
+					this.dtlInfo.plaN_DATE = this.formatDate(new Date())
+					// 初始化时间字符串
+					this.startTimeStr = '09:00'
+					this.endTimeStr = '21:00'
+				}
 
-				// 初始化时间字符串
-				this.startTimeStr = '09:00'
-				this.endTimeStr = '21:00'
+			},
+			dtlcommit() {
+				uni.$emit('BindDtl', this.dtlInfo)
 			}
 		},
 		mounted() {

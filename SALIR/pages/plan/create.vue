@@ -58,25 +58,28 @@
 				</view>
 			</view>
 
-			<view class="titletip"
-				style="margin-top: 24px; font-weight: 700; font-size: 18px; padding-bottom: 8px; border-bottom: 1px solid #eee;">
-				日程管理</view>
+			<view v-if="planInfo.id">
+				<view class="titletip"
+					style="margin-top: 24px; font-weight: 700; font-size: 18px; padding-bottom: 8px; border-bottom: 1px solid #eee;">
+					日程管理</view>
 
-			<view style="padding: 12px; border: 1px solid #eee; border-radius: 8px; margin-top: 12px;"
-				v-for="d in planInfo.dtls">
-				<view style="display: flex; justify-content: space-between; align-items: center;">
-					<view style=" font-size: 18px;">{{pdate(d.plaN_DATE.substr(0,10),'M')}} ·
-						{{d.address}}
+				<view style="padding: 12px; border: 1px solid #eee; border-radius: 8px; margin-top: 12px;"
+					v-for="d in planInfo.dtls" @click="goPlanDtl(d)">
+					<view style="display: flex; justify-content: space-between; align-items: center;">
+						<view style=" font-size: 18px;">{{pdate(d.plaN_DATE.substr(0,10),'M')}} ·
+							{{d.address}}
+						</view>
+						<van-icon name="arrow" style="font-size: 18px; color: #999;" />
 					</view>
-					<van-icon name="arrow" style="font-size: 18px; color: #999;" />
+					<view style="color: #999; font-size: 14px; margin-top: 4px;">{{d.begiN_TIME}} - {{d.enD_TIME}}
+					</view>
 				</view>
-				<view style="color: #999; font-size: 14px; margin-top: 4px;">{{d.begiN_TIME}} - {{d.enD_TIME}}</view>
-			</view>
 
-			<view style="padding: 12px; border-radius: 8px; margin-top: 12px;">
-				<van-button round type="info" color="#165DFF" @click="itineraryAdd" block :disabled="!isDateValid">
-					<van-icon name="add" />添加行程
-				</van-button>
+				<view style="padding: 12px; border-radius: 8px; margin-top: 12px;">
+					<van-button round type="info" color="#165DFF" @click="itineraryAdd" block :disabled="!isDateValid">
+						<van-icon name="add" />添加行程
+					</van-button>
+				</view>
 			</view>
 		</view>
 	</view>
@@ -101,7 +104,17 @@
 	export default {
 		data() {
 			return {
-				planInfo: {},
+				planInfo: {
+					id: '',
+					planname: '',
+					img: '',
+					begindt: {},
+					enddt: {},
+					realbegin: {},
+					realend: {},
+					address: '',
+					dtls: []
+				},
 				plan: '',
 				dateTimebegin: '',
 				dateTimeend: '',
@@ -115,8 +128,12 @@
 			}
 		},
 		onLoad() {
-			this.planInfo = uni.getStorageSync('tempItem')
-			//uni.removeStorageSync('tempItem')
+			var temp = uni.getStorageSync('tempItem')
+			if (temp) {
+				this.planInfo = temp
+				uni.removeStorageSync('tempItem')
+			}
+
 		},
 		computed: {
 			isDateValid() {
@@ -137,7 +154,25 @@
 				uni.navigateBack()
 			},
 			onClickRight(e) {
-				console.log(this.base64)
+
+				const userInfo = uni.getStorageSync('UserInfo')
+				var param = {
+					id = this.planInfo.id,
+					uid = userInfo.id,
+					name = this.planInfo.planname,
+					begin = this.planInfo.realbegin.replace(/年|月|日/g, '-').slice(0, -1),
+					end = this.planInfo.realend.replace(/年|月|日/g, '-').slice(0, -1),
+					target = this.planinfo.address,
+					base64 = this.base64
+				}
+				requestHttp({
+					servername: 'api/tsplan/ExcPlan',
+					params: param,
+					method: 'post'
+				}).then(res => {
+					console.log(res.data)
+					uni.navigateBack()
+				})
 			},
 			changeDateTime(e) {
 				this.dateTimebegin = e.detail.value
@@ -147,7 +182,7 @@
 			},
 			changeDateTimeEnd(e) {
 				this.dateTimeend = e.detail.value
-				this.planinfo.realend = generateTimeStr(this.dateTimeArray, this.dateTimeend)
+				this.planInfo.realend = generateTimeStr(this.dateTimeArray, this.dateTimeend)
 				// 验证时间范围
 				this.validateDateRange();
 			},
@@ -198,26 +233,26 @@
 				this.dateTimeArray = obj.dateTimeArray
 				this.dateTimebegin = obj.dateTime
 				this.dateTimeend = obj.dateTime
-				if (!this.planInfo) {
-					this.planInfo.realbegin = this.formatDate(new Date())
-					this.planInfo.realend = this.formatDate(new Date())
-				} else {
+
+				if (this.planInfo.id) {
 					const bt = this.planInfo.realbegin.replace(/年|月|日/g, '-').slice(0, -1);
 					const et = this.planInfo.realend.replace(/年|月|日/g, '-').slice(0, -1);
 					this.dateTimebegin = dtPickerShort(this.startYear, endYear, bt).dateTime
 					this.dateTimeend = dtPickerShort(this.startYear, endYear, et).dateTime
+				} else {
+					this.planInfo.realbegin = this.formatDate(new Date())
+					this.planInfo.realend = this.formatDate(new Date())
 				}
 
 			},
 			chooseConverImage() {
 				uni.chooseImage({
 					count: 1,
-					sizeType: ['original'],
+					sizeType: ['original', 'compressed'],
 					sourceType: ['album'],
 					success: (res) => {
-						this.planInfo.img = res.tempFilePaths[0];
-						this.ImgToBase64(res.tempFilePaths[0]).then(base64 => {
-							console.log(base64)
+						const tempFilePath = res.tempFilePaths[0];
+						this.ImgToBase64(tempFilePath).then(base64 => {
 							this.base64 = base64
 						})
 					}
@@ -234,6 +269,11 @@
 				})
 			},
 			itineraryAdd() {
+				uni.$off("BindDtl")
+				uni.$on("BindDtl", res => {
+					console.log(res)
+					uni.$off("BindDtl")
+				})
 				// 传递开始和结束日期到详情页面
 				const startDate = this.planInfo.realbegin ? this.planInfo.realbegin.replace(/年|月|日/g, '-').slice(0, -1) :
 					'2025-03-15';
@@ -243,6 +283,8 @@
 				uni.navigateTo({
 					url: `/pages/plan/createDetail?startDate=${startDate}&endDate=${endDate}`
 				})
+
+
 			},
 			GetPlanDtl() {
 				var opt = {
@@ -254,10 +296,23 @@
 				}
 				requestHttp(opt).then(res => {
 					this.planInfo.dtls = res.data
+					for (var p = 0; p < this.planInfo.dtls.length; p++) {
+						this.planInfo.dtls[p].begiN_TIME = this.planInfo.dtls[p].begiN_TIME.substr(0, 5)
+						this.planInfo.dtls[p].enD_TIME = this.planInfo.dtls[p].enD_TIME.substr(0, 5)
+					}
 
 				})
+			},
+			goPlanDtl(e) {
+				uni.setStorageSync('tempDtl', e)
 
-
+				const startDate = this.planInfo.realbegin ? this.planInfo.realbegin.replace(/年|月|日/g, '-').slice(0, -1) :
+					'2025-03-15';
+				const endDate = this.planInfo.realend ? this.planInfo.realend.replace(/年|月|日/g, '-').slice(0, -1) :
+					'2025-03-20';
+				uni.navigateTo({
+					url: `/pages/plan/createDetail?startDate=${startDate}&endDate=${endDate}`
+				})
 			}
 		},
 		mounted() {

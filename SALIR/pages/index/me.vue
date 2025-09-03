@@ -119,7 +119,7 @@
 				maxphone: 11,
 				maxname: 6,
 				// 应用版本
-				appVersion: '12.1.1', // 微博常见版本号格式
+				appVersion: '12.1.1',
 				// 弹窗控制
 				showPhoneInput: false,
 				showNameInput: false,

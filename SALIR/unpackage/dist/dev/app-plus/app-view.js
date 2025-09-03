@@ -4323,118 +4323,138 @@ var render = function () {
             ],
             1
           ),
-          _c(
-            "uni-view",
-            {
-              staticClass: _vm._$g(27, "sc"),
-              staticStyle: {
-                "margin-top": "24px",
-                "font-weight": "700",
-                "font-size": "18px",
-                "padding-bottom": "8px",
-                "border-bottom": "1px solid #eee",
-              },
-              attrs: { _i: 27 },
-            },
-            [_vm._v("日程管理")]
-          ),
-          _vm._l(_vm._$g(28, "f"), function (d, $10, $20, $30) {
-            return _c(
-              "uni-view",
-              {
-                key: d,
-                staticStyle: {
-                  padding: "12px",
-                  border: "1px solid #eee",
-                  "border-radius": "8px",
-                  "margin-top": "12px",
-                },
-                attrs: { _i: "28-" + $30 },
-              },
-              [
-                _c(
-                  "uni-view",
-                  {
-                    staticStyle: {
-                      display: "flex",
-                      "justify-content": "space-between",
-                      "align-items": "center",
+          _vm._$g(27, "i")
+            ? _c(
+                "uni-view",
+                { attrs: { _i: 27 } },
+                [
+                  _c(
+                    "uni-view",
+                    {
+                      staticClass: _vm._$g(28, "sc"),
+                      staticStyle: {
+                        "margin-top": "24px",
+                        "font-weight": "700",
+                        "font-size": "18px",
+                        "padding-bottom": "8px",
+                        "border-bottom": "1px solid #eee",
+                      },
+                      attrs: { _i: 28 },
                     },
-                    attrs: { _i: "29-" + $30 },
-                  },
-                  [
-                    _c(
+                    [_vm._v("日程管理")]
+                  ),
+                  _vm._l(_vm._$g(29, "f"), function (d, $10, $20, $30) {
+                    return _c(
                       "uni-view",
                       {
-                        staticStyle: { "font-size": "18px" },
-                        attrs: { _i: "30-" + $30 },
+                        key: d,
+                        staticStyle: {
+                          padding: "12px",
+                          border: "1px solid #eee",
+                          "border-radius": "8px",
+                          "margin-top": "12px",
+                        },
+                        attrs: { _i: "29-" + $30 },
+                        on: {
+                          click: function ($event) {
+                            return _vm.$handleViewEvent($event)
+                          },
+                        },
                       },
                       [
-                        _vm._v(
-                          _vm._$g("30-" + $30, "t0-0") +
-                            " ·\n\t\t\t\t\t" +
-                            _vm._$g("30-" + $30, "t0-1")
+                        _c(
+                          "uni-view",
+                          {
+                            staticStyle: {
+                              display: "flex",
+                              "justify-content": "space-between",
+                              "align-items": "center",
+                            },
+                            attrs: { _i: "30-" + $30 },
+                          },
+                          [
+                            _c(
+                              "uni-view",
+                              {
+                                staticStyle: { "font-size": "18px" },
+                                attrs: { _i: "31-" + $30 },
+                              },
+                              [
+                                _vm._v(
+                                  _vm._$g("31-" + $30, "t0-0") +
+                                    " ·\n\t\t\t\t\t\t" +
+                                    _vm._$g("31-" + $30, "t0-1")
+                                ),
+                              ]
+                            ),
+                            _c("van-icon", {
+                              staticStyle: {
+                                "font-size": "18px",
+                                color: "#999",
+                              },
+                              attrs: { _i: "32-" + $30 },
+                            }),
+                          ],
+                          1
                         ),
-                      ]
-                    ),
-                    _c("van-icon", {
-                      staticStyle: { "font-size": "18px", color: "#999" },
-                      attrs: { _i: "31-" + $30 },
-                    }),
-                  ],
-                  1
-                ),
-                _c(
-                  "uni-view",
-                  {
-                    staticStyle: {
-                      color: "#999",
-                      "font-size": "14px",
-                      "margin-top": "4px",
+                        _c(
+                          "uni-view",
+                          {
+                            staticStyle: {
+                              color: "#999",
+                              "font-size": "14px",
+                              "margin-top": "4px",
+                            },
+                            attrs: { _i: "33-" + $30 },
+                          },
+                          [
+                            _vm._v(
+                              _vm._$g("33-" + $30, "t0-0") +
+                                " - " +
+                                _vm._$g("33-" + $30, "t0-1")
+                            ),
+                          ]
+                        ),
+                      ],
+                      1
+                    )
+                  }),
+                  _c(
+                    "uni-view",
+                    {
+                      staticStyle: {
+                        padding: "12px",
+                        "border-radius": "8px",
+                        "margin-top": "12px",
+                      },
+                      attrs: { _i: 34 },
                     },
-                    attrs: { _i: "32-" + $30 },
-                  },
-                  [
-                    _vm._v(
-                      _vm._$g("32-" + $30, "t0-0") +
-                        " - " +
-                        _vm._$g("32-" + $30, "t0-1")
-                    ),
-                  ]
-                ),
-              ],
-              1
-            )
-          }),
-          _c(
-            "uni-view",
-            {
-              staticStyle: {
-                padding: "12px",
-                "border-radius": "8px",
-                "margin-top": "12px",
-              },
-              attrs: { _i: 33 },
-            },
-            [
-              _c(
-                "van-button",
-                {
-                  attrs: { _i: 34 },
-                  on: {
-                    click: function ($event) {
-                      return _vm.$handleViewEvent($event)
-                    },
-                  },
-                },
-                [_c("van-icon", { attrs: { _i: 35 } }), _vm._v("添加行程")],
-                1
-              ),
-            ],
-            1
-          ),
+                    [
+                      _c(
+                        "van-button",
+                        {
+                          attrs: { _i: 35 },
+                          on: {
+                            click: function ($event) {
+                              return _vm.$handleViewEvent($event)
+                            },
+                          },
+                        },
+                        [
+                          _c("van-icon", { attrs: { _i: 36 } }),
+                          _vm._v("添加行程"),
+                        ],
+                        1
+                      ),
+                    ],
+                    1
+                  ),
+                ],
+                2
+              )
+            : _vm._e(),
         ],
-        2
+        1
       ),
     ],
     1
@@ -4639,6 +4659,11 @@ var render = function () {
                 _c("van-icon", {
                   staticStyle: { "font-size": "25px", color: "#007aff" },
                   attrs: { _i: "3-" + _si },
+                  on: {
+                    click: function ($event) {
+                      return _vm.$handleViewEvent($event)
+                    },
+                  },
                 }),
               ]
             },
@@ -5006,6 +5031,13 @@ var render = function () {
                   placeholder: "例如：日本东京迪士尼乐园",
                   _i: 36,
                 },
+                model: {
+                  value: _vm._$g(36, "v-model"),
+                  callback: function ($$v) {
+                    _vm.$handleVModelEvent(36, $$v)
+                  },
+                  expression: "dtlInfo.address",
+                },
               }),
             ],
             1
@@ -5040,7 +5072,7 @@ var render = function () {
                   callback: function ($$v) {
                     _vm.$handleVModelEvent(39, $$v)
                   },
-                  expression: "remark",
+                  expression: "dtlInfo.remark",
                 },
               }),
             ],
