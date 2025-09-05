@@ -41,35 +41,7 @@
 	export default {
 		data() {
 			return {
-				itins: [{
-					planname: '东京',
-					img: 'https://modao.cc/ai/uploads/ai_pics/15/154327/aigp_1755675816.jpeg',
-					begindt: '3月15日',
-					enddt: '3月20日',
-					tips: [{
-							val: '购物',
-						},
-						{
-							val: '美食',
-						}
-					],
-					address: '东京、大阪、京都',
-					dtls: []
-				}, {
-					planname: '夏威夷',
-					img: 'https://modao.cc/ai/uploads/ai_pics/15/154328/aigp_1755675818.jpeg',
-					begindt: '5月22日',
-					enddt: '5月30日',
-					tips: [{
-							val: '海滩',
-						},
-						{
-							val: '度假',
-						}
-					],
-					address: '檀香山、茂宜岛',
-					dtls: []
-				}],
+				itins: [],
 				plan: ''
 			}
 		},
@@ -80,6 +52,7 @@
 				})
 			},
 			init() {
+				const that = Vue.prototype;
 				const userInfo = uni.getStorageSync('UserInfo')
 				const opt = {
 					servername: 'api/TsPlan/QueryPlan',
@@ -92,10 +65,14 @@
 					const result = res.data
 					this.itins = [];
 					for (var i = 0; i < result.length; i++) {
+						var hPath = result[i].heaD_IMG
+						if (!result[i].heaD_IMG.includes('http')) {
+							hPath = that.ImgsURL + result[i].heaD_IMG
+						}
 						this.itins.push({
 							id: result[i].id,
 							planname: result[i].plaN_NAME,
-							img: result[i].heaD_IMG,
+							img: hPath,
 							begindt: parseDateString(result[i].begiN_DATE, 'M'),
 							enddt: parseDateString(result[i].enD_DATE, 'M'),
 							realbegin: parseDateString(result[i].begiN_DATE),

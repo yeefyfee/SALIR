@@ -71,6 +71,9 @@ export function requestHttp(opt) {
 				url: requestUrl,
 				data: opt.params,
 				method: opt.method,
+				header: {
+					Authorization: that.Authorization
+				},
 				success: (res) => {
 					console.log("Response【" + requestUrl + "】 INFO JSON:" + JSON.stringify(res
 						.data))

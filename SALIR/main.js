@@ -8,8 +8,9 @@ Vue.config.productionTip = false
 const bus = new Vue()
 Vue.prototype.$bus = bus
 
-Vue.prototype.RequestURL = 'http://salir.nat123.top:8099/'
-Vue.prototype.ImgsURL = 'http://imgs.nat123.top:39160/'
+Vue.prototype.RequestURL = 'http://sar.free.idcfengye.com/'
+Vue.prototype.ImgsURL = 'http://33100903.nat123.top/'
+Vue.prototype.Authorization = 'Basic eWVlOnllZTEyMzQ1Ng=='
 App.mpType = 'app'
 const app = new Vue({
 	...App

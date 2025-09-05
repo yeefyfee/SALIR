@@ -29,75 +29,55 @@
 </template>
 
 <script>
+	import {
+		requestHttp
+	} from '../../api/request'
+
 	export default {
 		data() {
 			return {
 				dDate: '',
 				dDay: '',
-				runList: [{
-					date: '2025-08-23',
-					info: '值班',
-					color: '#007AFF',
-					data: [{
-							beginMin: '09:00',
-							endMin: '21:00',
-							target: '东京迪士尼乐园',
-							remark: '游玩主题乐园和观看烟火表演',
-							runtype: '自驾'
-						},
-						{
-							beginMin: '18:30',
-							endMin: '20:00',
-							target: '迪士尼主题餐厅晚餐',
-							remark: '需要提前预定的餐厅',
-							runtype: '步行'
-						},
-						{
-							beginMin: '21:00',
-							endMin: '23:00',
-							target: '回家',
-							remark: '提前叫车排队',
-							runtype: '自驾'
-						}
-					]
-				}, {
-					date: '2025-08-25',
-					info: '发工资',
-					color: '#007AFF',
-					data: [{
-							beginMin: '08:00',
-							endMin: '09:00',
-							target: '上班',
-							remark: '早出门',
-							runtype: '自驾'
-						},
-						{
-							beginMin: '18:30',
-							endMin: '20:00',
-							target: '去财务领工资',
-							remark: '早点去',
-							runtype: '步行'
-						}
-					]
-				}],
+				runList: [],
 				planDtl: []
 			}
 		},
 		methods: {
 			init() {
-				const today = new Date()
-				console.log(today)
-				this.dDate = this.formatMonth(today)
-				if (this.runList.length > 0) {
-					const defaultDateItem = this.runList[0]; // 示例中是 {date: '2025-08-23', ...}
-					const [defaultYear, defaultMonth, defaultDate] = defaultDateItem.date.split('-'); // 拆分日期：2025、08、23
-					this.dDay = `${defaultMonth}月${defaultDate}日`;
-					this.planDtl = defaultDateItem.data || [];
-				} else {
-					this.dDay =
-						`${(today.getMonth()+1).toString().padStart(2, '0')}月${today.getDate().toString().padStart(2, '0')}日`;
-					this.planDtl = [];
-				}
+				const userInfo = uni.getStorageSync('UserInfo')
+				requestHttp({
+					servername: 'api/tsplan/GetPlanByCalend',
+					params: {
+						uid: userInfo.id
+					},
+					method: 'get'
+				}).then(res => {
+					for (var i = 0; i < res.data.length; i++) {
+						res.data[i].date = res.data[i].date.substr(0, 10)
+						var info = res.data[i].data
+						for (var j = 0; j < info.length; j++) {
+							info[j].beginMin = info[j].beginMin.substr(0, 5)
+							info[j].endMin = info[j].endMin.substr(0, 5)
+						}
+						res.data[i].data = info
+					}
+					this.runList = res.data
+					const today = new Date()
+					console.log(today)
+					this.dDate = this.formatMonth(today)
+					if (this.runList.length > 0) {
+						const defaultDateItem = this.runList[0]; // 示例中是 {date: '2025-08-23', ...}
+						const [defaultYear, defaultMonth, defaultDate] = defaultDateItem.date.split(
+						'-'); // 拆分日期：2025、08、23
+						this.dDay = `${defaultMonth}月${defaultDate}日`;
+						this.planDtl = defaultDateItem.data || [];
+					} else {
+						this.dDay =
+							`${(today.getMonth()+1).toString().padStart(2, '0')}月${today.getDate().toString().padStart(2, '0')}日`;
+						this.planDtl = [];
+					}
+				})
+
 			},
 			formatMonth(date) {
 				const year = date.getFullYear()

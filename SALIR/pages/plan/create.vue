@@ -48,7 +48,7 @@
 					style="width: 100%; height: 150px; border-radius: 12px; border: 1px dashed #ddd; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #999; background: #f9f9f9;"
 					@click="chooseConverImage">
 					<template v-if="planInfo.img">
-						<image :src="planInfo.img"
+						<image :src="planInfo.img" mode="aspectFit"
 							style="width: 100%; height: 100%; border-radius: 12px; object-fit: cover;" />
 					</template>
 					<template v-else>
@@ -76,7 +76,7 @@
 				</view>
 
 				<view style="padding: 12px; border-radius: 8px; margin-top: 12px;">
-					<van-button round type="info" color="#165DFF" @click="itineraryAdd" block :disabled="!isDateValid">
+					<van-button round type="info" color="#165DFF" @click="goPlanDtl()" block :disabled="!isDateValid">
 						<van-icon name="add" />添加行程
 					</van-button>
 				</view>
@@ -157,21 +157,23 @@
 
 				const userInfo = uni.getStorageSync('UserInfo')
 				var param = {
-					id = this.planInfo.id,
-					uid = userInfo.id,
-					name = this.planInfo.planname,
-					begin = this.planInfo.realbegin.replace(/年|月|日/g, '-').slice(0, -1),
-					end = this.planInfo.realend.replace(/年|月|日/g, '-').slice(0, -1),
-					target = this.planinfo.address,
-					base64 = this.base64
+					id: this.planInfo.id,
+					uid: userInfo.id,
+					name: this.planInfo.planname,
+					begin: this.planInfo.realbegin.replace(/年|月|日/g, '-').slice(0, -1),
+					end: this.planInfo.realend.replace(/年|月|日/g, '-').slice(0, -1),
+					target: this.planInfo.address,
+					base64: this.base64,
+					tag: ''
 				}
 				requestHttp({
 					servername: 'api/tsplan/ExcPlan',
 					params: param,
 					method: 'post'
 				}).then(res => {
-					console.log(res.data)
-					uni.navigateBack()
+					uni.reLaunch({
+						url: '/pages/index/index'
+					})
 				})
 			},
 			changeDateTime(e) {
@@ -252,6 +254,7 @@
 					sourceType: ['album'],
 					success: (res) => {
 						const tempFilePath = res.tempFilePaths[0];
+						this.planInfo.img = tempFilePath
 						this.ImgToBase64(tempFilePath).then(base64 => {
 							this.base64 = base64
 						})
@@ -267,24 +270,6 @@
 						reject(error)
 					})
 				})
-			},
-			itineraryAdd() {
-				uni.$off("BindDtl")
-				uni.$on("BindDtl", res => {
-					console.log(res)
-					uni.$off("BindDtl")
-				})
-				// 传递开始和结束日期到详情页面
-				const startDate = this.planInfo.realbegin ? this.planInfo.realbegin.replace(/年|月|日/g, '-').slice(0, -1) :
-					'2025-03-15';
-				const endDate = this.planInfo.realend ? this.planInfo.realend.replace(/年|月|日/g, '-').slice(0, -1) :
-					'2025-03-20';
-
-				uni.navigateTo({
-					url: `/pages/plan/createDetail?startDate=${startDate}&endDate=${endDate}`
-				})
-
-
 			},
 			GetPlanDtl() {
 				var opt = {
@@ -304,14 +289,33 @@
 				})
 			},
 			goPlanDtl(e) {
+				uni.$off("BindDtl")
+				uni.$on("BindDtl", res => {
+					console.log(res)
+					if (res) {
+						requestHttp({
+							servername: 'api/tsplandetail/BindPlanDtl',
+							params: res,
+							method: 'post'
+						}).then(req => {
+							console.log(req.data)
+							this.GetPlanDtl()
+						})
+					} else {
+						this.GetPlanDtl()
+					}
+
+					uni.$off("BindDtl")
+				})
 				uni.setStorageSync('tempDtl', e)
 
 				const startDate = this.planInfo.realbegin ? this.planInfo.realbegin.replace(/年|月|日/g, '-').slice(0, -1) :
 					'2025-03-15';
 				const endDate = this.planInfo.realend ? this.planInfo.realend.replace(/年|月|日/g, '-').slice(0, -1) :
 					'2025-03-20';
+				const pid = this.planInfo.id
 				uni.navigateTo({
-					url: `/pages/plan/createDetail?startDate=${startDate}&endDate=${endDate}`
+					url: `/pages/plan/createDetail?startDate=${startDate}&endDate=${endDate}&pid=${pid}`
 				})
 			}
 		},

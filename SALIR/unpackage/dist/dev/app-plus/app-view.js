@@ -4307,7 +4307,11 @@ var render = function () {
                             "border-radius": "12px",
                             "object-fit": "cover",
                           },
-                          attrs: { src: _vm._$g(24, "a-src"), _i: 24 },
+                          attrs: {
+                            src: _vm._$g(24, "a-src"),
+                            mode: "aspectFit",
+                            _i: 24,
+                          },
                         }),
                       ]
                     : [
@@ -4683,7 +4687,7 @@ var render = function () {
             },
             attrs: {
               id: "3",
-              src: "https://modao.cc/ai/uploads/ai_pics/15/154330/aigp_1755675820.jpeg",
+              src: _vm._$g(5, "a-src"),
               alt: "tokyo disneyland",
               _i: 5,
             },
@@ -5078,6 +5082,35 @@ var render = function () {
             ],
             1
           ),
+          _vm._$g(40, "i")
+            ? _c(
+                "uni-view",
+                {
+                  staticStyle: {
+                    padding: "12px",
+                    "border-radius": "8px",
+                    "margin-top": "12px",
+                  },
+                  attrs: { _i: 40 },
+                },
+                [
+                  _c(
+                    "van-button",
+                    {
+                      attrs: { _i: 41 },
+                      on: {
+                        click: function ($event) {
+                          return _vm.$handleViewEvent($event)
+                        },
+                      },
+                    },
+                    [_c("van-icon", { attrs: { _i: 42 } }), _vm._v("删除日程")],
+                    1
+                  ),
+                ],
+                1
+              )
+            : _vm._e(),
         ],
         1
       ),

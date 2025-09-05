@@ -6,7 +6,7 @@
 			</template>
 		</van-nav-bar>
 		<view class="content hide-scrollbar">
-			<img id="3" src="https://modao.cc/ai/uploads/ai_pics/15/154330/aigp_1755675820.jpeg" alt="tokyo disneyland"
+			<img id="3" :src="hand_img" alt="tokyo disneyland"
 				style="width: 100%; height: 180px; border-radius: 12px; object-fit: cover;">
 
 			<view style="margin-top: 24px;">
@@ -48,22 +48,23 @@
 				<view style="font-size: 16px; margin-bottom: 8px; font-weight: 500;" class="titletip">出行方式</view>
 				<view
 					style="display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; -webkit-overflow-scrolling: touch;">
-					<view v-for="item in transportList" @click="runtype = item.code" :style="{
+					<view v-for="item in transportList" @click="onRuntype(item)" :style="{
 						flex: '0 0 auto',
 						width: '60px',
 						height: '60px',
 						borderRadius: '12px',
-						background: item.code == runtype ? item.cbgcolor : item.dbgcolor,
+						background: item.code == dtlInfo.ruN_TYPE ? item.cbgcolor : item.dbgcolor,
 						display: 'flex',
 						flexDirection: 'column',
 						justifyContent: 'center',
 						alignItems: 'center'
 					}">
-						<image :src="item.code == runtype ? item.cicon : item.dicon" style="width: 25px;height:25px;" />
+						<image :src="item.code == dtlInfo.ruN_TYPE ? item.cicon : item.dicon"
+							style="width: 25px;height:25px;" />
 						<view :style="{
 							fontSize: '12px',
 							marginTop: '4px',
-							color: item.code == runtype ? item.ctxtcolor : item.dtxtcolor
+							color: item.code == dtlInfo.ruN_TYPE ? item.ctxtcolor : item.dtxtcolor
 						}">{{ item.name }}</view>
 					</view>
 				</view>
@@ -75,7 +76,7 @@
 					<van-switch :checked="checked" @change="onSwitchChange" />
 				</view>
 				<view v-if="checked" style="margin-top: 12px; display: flex; gap: 8px;">
-					<van-tag type="primary" size="medium" style="margin-left: 8px;" :plain="t.min !== time"
+					<van-tag type="primary" size="medium" style="margin-left: 8px;" :plain="t.min !== dtlInfo.infO_TIME"
 						v-for="t in runtime" @click="onTime(t)">{{ t.option }}</van-tag>
 				</view>
 			</view>
@@ -91,11 +92,20 @@
 				<textarea class="form-input" style="height: 100px;" v-model="dtlInfo.remark"
 					placeholder="添加日程备注信息，例如：提前官网购票，避开周末节假日人流高峰。"></textarea>
 			</view>
+
+			<view style="padding: 12px; border-radius: 8px; margin-top: 12px;" v-if="dtlInfo.id">
+				<van-button round type="danger" block @click="delDtl()">
+					<van-icon name="add" />删除日程
+				</van-button>
+			</view>
 		</view>
 	</view>
 </template>
 
 <script>
+	import {
+		requestHttp
+	} from '../../api/request'
 	import {
 		getMonthDay,
 		generateTimeStr,
@@ -182,17 +192,18 @@
 				],
 				startTimeStr: '',
 				endTimeStr: '',
-				remark: ''
+				remark: '',
+				hand_img: '',
+				pid: ''
 			}
 		},
-		onLoad() {
+		onLoad(option) {
 			var dtl = uni.getStorageSync('tempDtl')
 			if (dtl) {
 				this.dtlInfo = dtl
-
-				console.log(this.dtlInfo)
 				uni.removeStorageSync('tempDtl')
 			}
+			this.pid = option.pid
 		},
 		methods: {
 			back() {
@@ -202,12 +213,15 @@
 				this.checked = e.detail;
 			},
 			onTime(e) {
-				this.time = e.min;
+				this.$set(this.dtlInfo, 'infO_TIME', e.min)
+			},
+			onRuntype(e) {
+				this.$set(this.dtlInfo, 'ruN_TYPE', e.code)
 			},
 			// 日期选择器方法
 			changeDateTime(e) {
 				this.dateTime = e.detail.value
-				this.selectedDate = generateTimeStr(this.dateTimeArray, this.dateTime)
+				this.dtlInfo.plaN_DATE = generateTimeStr(this.dateTimeArray, this.dateTime)
 			},
 			changeDateTimeColumn(e) {
 				let {
@@ -227,13 +241,13 @@
 			// 时间选择器方法
 			changeStartTime(e) {
 				this.startTime = e.detail.value
-				this.startTimeStr = this.timeArray[0][this.startTime[0]] + ':' + this.timeArray[1][this.startTime[1]]
+				this.dtlInfo.begiN_TIME = this.timeArray[0][this.startTime[0]] + ':' + this.timeArray[1][this.startTime[1]]
 				// 验证时间范围
 				this.validateTimeRange();
 			},
 			changeEndTime(e) {
 				this.endTime = e.detail.value
-				this.endTimeStr = this.timeArray[0][this.endTime[0]] + ':' + this.timeArray[1][this.endTime[1]]
+				this.dtlInfo.enD_TIME = this.timeArray[0][this.endTime[0]] + ':' + this.timeArray[1][this.endTime[1]]
 				// 验证时间范围
 				this.validateTimeRange();
 			},
@@ -271,6 +285,7 @@
 				return `${year}年${month}月${day}日`;
 			},
 			initDateTime() {
+				this.hand_img = Vue.prototype.ImgsURL + 'head_bg.png'
 				// 从页面参数获取时间范围
 				const pages = getCurrentPages();
 				const currentPage = pages[pages.length - 1];
@@ -286,21 +301,40 @@
 					const dt = this.dtlInfo.plaN_DATE.replace(/年|月|日/g, '-').slice(0, -1)
 					this.dtlInfo.plaN_DATE = parseDateString(this.dtlInfo.plaN_DATE.substr(0.10))
 					this.dateTime = dtPickerShort(this.startDate, endDate, dt).dateTime
-					this.startTimeStr = this.dtlInfo.begiN_TIME.substr(0, 5)
-					this.endTimeStr = this.dtlInfo.enD_TIME.substr(0, 5)
-					this.runtype = this.dtlInfo.ruN_TYPE
 					this.checked = this.dtlInfo.infO_FLAG == 'Y'
-					this.time = this.dtlInfo.infO_TIME
 				} else {
 					this.dtlInfo.plaN_DATE = this.formatDate(new Date())
+					this.$set(this.dtlInfo, 'ruN_TYPE', this.runtype)
+					this.$set(this.dtlInfo, 'infO_TIME', this.time)
 					// 初始化时间字符串
-					this.startTimeStr = '09:00'
-					this.endTimeStr = '21:00'
+					this.dtlInfo.begiN_TIME = '09:00'
+					this.dtlInfo.enD_TIME = '21:00'
 				}
 
 			},
 			dtlcommit() {
+				if (!this.dtlInfo.id) {
+					this.dtlInfo.id = ''
+				}
+				this.dtlInfo.plaN_ID = this.pid
+				this.dtlInfo.infO_FLAG = this.checked ? 'Y' : 'N'
+				this.dtlInfo.plaN_DATE = this.dtlInfo.plaN_DATE.replace(/年|月|日/g, '-').slice(0, -1)
+				this.dtlInfo.begiN_TIME = this.dtlInfo.begiN_TIME + ':00'
+				this.dtlInfo.enD_TIME = this.dtlInfo.enD_TIME + ':00'
 				uni.$emit('BindDtl', this.dtlInfo)
+				uni.navigateBack()
+			},
+			delDtl() {
+				requestHttp({
+					servername: 'api/tsplandetail/DeleteDtl',
+					params: {
+						id: this.dtlInfo.id
+					},
+					method: 'get'
+				}).then(res => {
+					uni.$emit('BindDtl', '')
+					uni.navigateBack()
+				})
 			}
 		},
 		mounted() {
