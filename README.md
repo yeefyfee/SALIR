@@ -5,3 +5,5 @@
 <br>
 后面会陆续完善地图标注，行程总览<br>
 后端是：webapi+ioc+sqlsugar，基本框架：<a href='https://gitee.com/yeefyfy/salirapi' />供使用
+
+APP整体基本开发完成，apk安装路径<a href='http://33100903.nat123.top/app/app.apk'/>点击下载
